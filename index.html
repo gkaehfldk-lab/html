@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f4ef">
+    <title>Wrap — 디지털 크리에이터</title>
+    <style>
+        :root {
+            color-scheme: light;
+            font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+            color: #20231f;
+            background: #f5f4ef;
+            font-synthesis: none;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            --ink: #20231f;
+            --muted: #777a72;
+            --accent: #d3f36b;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .wrap {
+            width: 100%;
+            height: 100vh;
+            height: 100svh;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+            overscroll-behavior-y: contain;
+            scrollbar-width: none;
+        }
+
+        .wrap::-webkit-scrollbar {
+            display: none;
+        }
+
+        .section {
+            position: relative;
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            height: 100svh;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            padding: 32px 7vw 38px;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+        }
+
+        .section--intro {
+            background: #f5f4ef;
+        }
+
+        .section--profile {
+            color: #f5f4ef;
+            background: #222820;
+        }
+
+        .section--session {
+            background: var(--accent);
+        }
+
+        .topbar,
+        .section-footer {
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: -.06em;
+        }
+
+        .topbar-label,
+        .section-count,
+        .eyebrow,
+        .section-footer {
+            font-size: 11px;
+            font-weight: 650;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .topbar-label,
+        .section-footer {
+            color: var(--muted);
+        }
+
+        .section--profile .topbar-label,
+        .section--profile .section-footer {
+            color: #b6b9b0;
+        }
+
+        .hero-content,
+        .profile-content,
+        .session-content {
+            position: relative;
+            z-index: 1;
+            width: min(100%, 1120px);
+            margin: auto;
+        }
+
+        .eyebrow {
+            margin: 0 0 28px;
+            color: var(--muted);
+        }
+
+        .section--profile .eyebrow {
+            color: var(--accent);
+        }
+
+        h1,
+        h2,
+        p {
+            margin-top: 0;
+        }
+
+        h1,
+        h2 {
+            margin-bottom: 0;
+            font-size: clamp(58px, 11vw, 150px);
+            font-weight: 750;
+            letter-spacing: -.095em;
+            line-height: .96;
+        }
+
+        .hero-title span {
+            display: block;
+        }
+
+        .hero-title span:last-child {
+            padding-left: 12vw;
+        }
+
+        .hero-title em {
+            display: inline-block;
+            width: .56em;
+            height: .56em;
+            margin-left: .1em;
+            border-radius: 50%;
+            background: var(--accent);
+            vertical-align: .04em;
+        }
+
+        .hero-copy {
+            max-width: 290px;
+            margin: 38px 0 0 12vw;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .hero-mark {
+            position: absolute;
+            top: 50%;
+            right: 2vw;
+            width: clamp(110px, 18vw, 250px);
+            aspect-ratio: 1;
+            border: 1px solid #d6d7ce;
+            border-radius: 50%;
+            transform: translateY(-45%);
+        }
+
+        .hero-mark::before,
+        .hero-mark::after {
+            position: absolute;
+            content: "";
+            inset: 14%;
+            border: 1px solid #d6d7ce;
+            border-radius: 50%;
+        }
+
+        .hero-mark::after {
+            inset: 30%;
+            background: var(--accent);
+            border: 0;
+        }
+
+        .profile-content {
+            display: grid;
+            grid-template-columns: 1.3fr .7fr;
+            align-items: end;
+            gap: 8vw;
+        }
+
+        .profile-content h2 {
+            font-size: clamp(55px, 9.5vw, 128px);
+        }
+
+        .profile-copy {
+            max-width: 340px;
+            padding-bottom: 8px;
+        }
+
+        .profile-copy p {
+            margin-bottom: 22px;
+            color: #c2c6bc;
+            font-size: 15px;
+            line-height: 1.9;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skills span {
+            padding: 8px 12px;
+            border: 1px solid #51584e;
+            border-radius: 999px;
+            color: #f5f4ef;
+            font-size: 11px;
+        }
+
+        .session-content {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .session-content h2 {
+            font-size: clamp(56px, 10vw, 138px);
+        }
+
+        .contact-link {
+            display: inline-flex;
+            min-width: 170px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 32px;
+            margin-bottom: 9px;
+            padding: 16px 18px;
+            border: 1px solid var(--ink);
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            transition: color .25s ease, background-color .25s ease;
+        }
+
+        .contact-link:hover,
+        .contact-link:focus-visible {
+            color: var(--accent);
+            background: var(--ink);
+        }
+
+        .section-count {
+            color: var(--ink);
+        }
+
+        .section--profile .section-count {
+            color: #b6b9b0;
+        }
+
+        .scroll-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .scroll-hint::before {
+            display: inline-block;
+            width: 25px;
+            height: 1px;
+            background: currentColor;
+            content: "";
+        }
+
+        .section-nav {
+            position: fixed;
+            z-index: 5;
+            top: 50%;
+            right: 28px;
+            display: grid;
+            gap: 10px;
+            transform: translateY(-50%);
+        }
+
+        .section-nav a {
+            display: block;
+            width: 7px;
+            height: 7px;
+            border: 1px solid currentColor;
+            border-radius: 50%;
+            color: #76796f;
+            transition: background-color .2s ease, transform .2s ease;
+        }
+
+        .section-nav a[aria-current="true"] {
+            background: currentColor;
+            transform: scale(1.35);
+        }
+
+        @media (max-width: 700px) {
+            .section {
+                padding: 24px 7vw 28px;
+            }
+
+            .topbar-label {
+                font-size: 9px;
+            }
+
+            .hero-title span:last-child {
+                padding-left: 5vw;
+            }
+
+            .hero-copy {
+                margin-left: 5vw;
+                font-size: 13px;
+            }
+
+            .hero-mark {
+                top: 35%;
+                right: -14vw;
+                opacity: .7;
+            }
+
+            .profile-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .profile-copy {
+                max-width: 400px;
+            }
+
+            .profile-copy p {
+                margin-bottom: 15px;
+                font-size: 13px;
+            }
+
+            .session-content {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .contact-link {
+                min-width: 150px;
+                padding: 14px 16px;
+            }
+
+            .section-nav {
+                right: 15px;
+            }
+
+            .section-footer {
+                font-size: 9px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="section-nav" aria-label="섹션 이동">
+        <a href="#intro" aria-label="인트로로 이동" aria-current="true"></a>
+        <a href="#profile" aria-label="프로필로 이동"></a>
+        <a href="#session" aria-label="연락처로 이동"></a>
+    </nav>
+
+    <main class="wrap">
+        <section class="section section--intro" id="intro" aria-label="인트로">
+            <header class="topbar">
+                <a class="brand" href="#intro" aria-label="Wrap 홈">WRAP®</a>
+                <span class="topbar-label">Independent digital creator</span>
+            </header>
+            <div class="hero-content">
+                <p class="eyebrow">Designing with intention · 2026</p>
+                <h1 class="hero-title"><span>Ideas into</span><span>digital <em aria-hidden="true"></em></span></h1>
+                <p class="hero-copy">좋은 아이디어가 오래 기억되는 경험이 되도록, 디지털의 가능성을 디자인합니다.</p>
+                <div class="hero-mark" aria-hidden="true"></div>
+            </div>
+            <footer class="section-footer">
+                <span class="scroll-hint">Scroll to explore</span>
+                <span class="section-count">01 / 03</span>
+            </footer>
+        </section>
+
+        <section class="section section--profile" id="profile" aria-label="프로필">
+            <header class="topbar">
+                <a class="brand" href="#intro" aria-label="Wrap 홈">WRAP®</a>
+                <span class="topbar-label">A little about me</span>
+            </header>
+            <div class="profile-content">
+                <div>
+                    <p class="eyebrow">Curiosity meets craft</p>
+                    <h2>Make it<br>meaningful.</h2>
+                </div>
+                <div class="profile-copy">
+                    <p>안녕하세요. 브랜드의 이야기를 발견하고, 사람과 연결되는 웹 경험을 만드는 크리에이터입니다. 작지만 세심한 디테일로 더 나은 화면을 고민합니다.</p>
+                    <div class="skills" aria-label="주요 역량">
+                        <span>UI / UX</span>
+                        <span>Web Design</span>
+                        <span>Creative Direction</span>
+                    </div>
+                </div>
+            </div>
+            <footer class="section-footer">
+                <span class="scroll-hint">Keep going</span>
+                <span class="section-count">02 / 03</span>
+            </footer>
+        </section>
+
+        <section class="section section--session" id="session" aria-label="연락처">
+            <header class="topbar">
+                <a class="brand" href="#intro" aria-label="Wrap 홈">WRAP®</a>
+                <span class="topbar-label">Have a good one in mind?</span>
+            </header>
+            <div class="session-content">
+                <div>
+                    <p class="eyebrow">Let’s make it happen</p>
+                    <h2>Start a<br>conversation.</h2>
+                </div>
+                <a class="contact-link" href="mailto:hello@wrap.design">
+                    <span>프로젝트 문의</span>
+                    <span aria-hidden="true">↗</span>
+                </a>
+            </div>
+            <footer class="section-footer">
+                <span>Made with intention · Seoul</span>
+                <span class="section-count">03 / 03</span>
+            </footer>
+        </section>
+    </main>
+
+    <script>
+        const sections = document.querySelectorAll(".section");
+        const navigationLinks = document.querySelectorAll(".section-nav a");
+
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+
+                navigationLinks.forEach((link) => {
+                    const isCurrent = link.hash === `#${entry.target.id}`;
+                    if (isCurrent) {
+                        link.setAttribute("aria-current", "true");
+                    } else {
+                        link.removeAttribute("aria-current");
+                    }
+                });
+            });
+        }, { root: document.querySelector(".wrap"), threshold: 0.6 });
+
+        sections.forEach((section) => sectionObserver.observe(section));
+    </script>
+</body>
+</html>
